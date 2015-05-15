@@ -5,7 +5,7 @@
 - `cd` into directory
 - `git init`
 - `git remote add origin https://github.com/DegreesOfFreedom/BlockRespawn.git`
-- `git pull remote origin`
+- `git pull origin master`
 - `git push -u origin master`
 - Should be all set up
 
