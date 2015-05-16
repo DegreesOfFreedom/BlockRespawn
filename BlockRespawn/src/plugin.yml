@@ -1,0 +1,9 @@
+name: BlockRespawn
+main: dev.zariem.blockrespawn.BlockRespawn
+description: Respawns blocks in certain regions.
+
+commands:
+    br:
+        usage: /<command>
+        aliases: [blockrespawn]
+        description: Main command for the BlockRespawn plugin.

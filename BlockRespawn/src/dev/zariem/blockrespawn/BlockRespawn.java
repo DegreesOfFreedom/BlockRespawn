@@ -1,20 +1,23 @@
 package dev.zariem.blockrespawn;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class BlockRespawn extends JavaPlugin implements Listener {
+public class BlockRespawn extends JavaPlugin {
+	
+	public static Map<String, Integer> readyToSelect;
+	// this map ensures that player who didn't issue the command can still right-click blocks with
+	// wooden swords without being handled by my listener class.
 	
 	public void onEnable() {
+		readyToSelect = new HashMap<String, Integer>();
 		Bukkit.getServer().getPluginManager().registerEvents(new BlockRespawnListener(), this);
 	}
 	
@@ -42,19 +45,23 @@ public class BlockRespawn extends JavaPlugin implements Listener {
 					return true;
 				}
 				int time = Integer.parseInt(args[3]);
+				
 				// TODO probably add a check for the validity of the material name.
 				Material mat = Material.getMaterial(args[2]);
-				BlockRespawnRegion newRegion = new BlockRespawnRegion(args[1], player.getWorld(), mat, time);
-				// TODO continue coding!
+				
+				BlockRespawnRegion region = new BlockRespawnRegion(args[1], player.getWorld(), mat, time);
+				player.sendMessage(ChatColor.GREEN + "You sucessfully created the region: " + region.getName());
+				
+				player.sendMessage(ChatColor.GREEN + "Please use a wooden sword and right click"
+						+ " on two blocks to set the region borders.");
+				
+				// register the player for events
+				readyToSelect.put(player.getName(), 2);
+				// the 2 makes sure that the player gets removed from the map, as soon as he chose 2 blocks.
+				
 			}
 		}
 		return true;
-	}
-	
-	@EventHandler
-	public void onPlayerRightClick(PlayerInteractEvent event){
-		Action action = event.getAction();
-		// TODO
 	}
 
 	public static boolean isInteger(String s) {
