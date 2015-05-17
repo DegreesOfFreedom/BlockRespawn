@@ -1,13 +1,14 @@
 package dev.zariem.blockrespawn.objects;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 public class Region
 {
@@ -16,7 +17,7 @@ public class Region
 	public UUID dimension;
 	public UUID regionID;
 	public String description;
-	public List<Material> blockTypes;
+	public ArrayList<Material> blockTypes;
 	
 	/**
 	 * Initialized on first point set
@@ -121,6 +122,37 @@ public class Region
 			FH.writeFile(jString, "BlockRespawn/regions/" + this.regionID.toString() + ".json");
 		} catch (IOException e) {
 			
+		}
+	}
+	
+	/**
+	 * Load region from JSON file
+	 * @param UUID String with region's UUID
+	 */
+	public void load(String UUID) {
+		String jString;
+		try {
+			jString = FH.readFile("BlockRespawn/regions/" + UUID + ".json");
+		} catch (IOException e) {
+			return;
+		}
+		
+		if(jString != null) {
+			JSONObject jObj = (JSONObject) JSONValue.parse(jString);
+			JSONObject regionStart = (JSONObject) jObj.get("regionStart");
+			this.start = new Coordinate((int) regionStart.get("x"), (int) regionStart.get("y"), (int) regionStart.get("z"));
+			JSONObject regionEnd = (JSONObject) jObj.get("regionStart");
+			this.end = new Coordinate((int) regionEnd.get("x"), (int) regionEnd.get("y"), (int) regionEnd.get("z"));
+			this.dimension = java.util.UUID.fromString((String) jObj.get("dimension"));
+			this.regionID = java.util.UUID.fromString((String) jObj.get("regionID"));
+			this.description = (String) jObj.get("description");
+			ArrayList<Material> jList = new ArrayList<Material>();
+			JSONArray jLArray = (JSONArray) jObj.get("blockTypes");
+			for(Object o : jLArray) {
+				String name = (String) o;
+				jList.add(Material.getMaterial(name));
+			}
+			this.blockTypes = jList;
 		}
 	}
 }
