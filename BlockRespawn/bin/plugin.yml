@@ -1,5 +1,6 @@
 name: BlockRespawn
 main: dev.zariem.blockrespawn.BlockRespawn
+version: 1.0
 description: Respawns blocks in certain regions.
 
 commands:

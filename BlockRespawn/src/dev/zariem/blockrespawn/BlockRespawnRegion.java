@@ -2,38 +2,38 @@ package dev.zariem.blockrespawn;
 
 
 import java.awt.font.NumericShaper.Range;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 
-public class BlockRespawnRegion implements Listener {
+public class BlockRespawnRegion {
 	/*
 	 * This defines a cuboid region in which a certain
 	 * block type has a certain respawning time.
 	 */
 	
 	final String name;
-	final Material material;
+//	final Material material;
 	final World world;
-	final long respawnSeconds;
+//	final long respawnSeconds;
 	int x1, y1, z1, x2, y2, z2;
 	Range rangeX;
+	public Map<Material, Long> respawnableBlocks;
+	// this map includes the Materials and their respawnTimes
 	
-	public BlockRespawnRegion(String n, World w, Material m, long respawnSeconds) {
+	
+	public BlockRespawnRegion(String n, World w) {
 		// constructor
 		this.name = n;
 		this.world = w;
-		this.material = m;
-		this.respawnSeconds = respawnSeconds;
+		respawnableBlocks = new HashMap<Material, Long>();
 	}
+	
 	
 	public void defineFirstCorner(Block block) {
 		// used for selecting the region
@@ -47,6 +47,7 @@ public class BlockRespawnRegion implements Listener {
 		this.z1 = block.getZ();
 	}
 	
+	
 	public void defineSecondCorner(Block block) {
 		// used for selecting the region
 		if (block.getWorld() != this.world) {
@@ -59,32 +60,39 @@ public class BlockRespawnRegion implements Listener {
 		this.z2 = block.getZ();
 	}
 	
-	@EventHandler
-	public void onRightClick(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		String name = player.getName();
-		if (BlockRespawn.readyToSelect.containsKey(name)) {
-		// only if the player is ready to select
-			Action action = event.getAction();
-			if (action == Action.RIGHT_CLICK_BLOCK) {
-				if (player.getItemInHand().getType() == Material.WOOD_SWORD) {
-					
-					if (BlockRespawn.readyToSelect.get(name) == 2) {
-						defineFirstCorner(event.getClickedBlock());
-						player.sendMessage(ChatColor.GREEN + "Selected the first block.");
-						BlockRespawn.readyToSelect.put(name, 1);
-						return;
-					}
-					
-					if (BlockRespawn.readyToSelect.get(name) == 1) {
-						defineSecondCorner(event.getClickedBlock());
-						player.sendMessage(ChatColor.GREEN + "Selected the second block.");
-						BlockRespawn.readyToSelect.remove(name);
-					}
-				}
-			}
+	
+	public void listAllMaterials() {
+		// prints out all the materials and their respawn times
+		for (Material mat : respawnableBlocks.keySet()) {
+			Bukkit.getServer().getLogger().info(ChatColor.GOLD + mat.name() + ": "
+					+ ChatColor.DARK_AQUA + respawnableBlocks.get(mat));
 		}
 	}
+	
+	
+	public void addRespawnableMaterial(String materialName, long respawnTime) {
+		if (respawnableBlocks.containsKey(Material.getMaterial(materialName))) {
+			Bukkit.getServer().getLogger().info(ChatColor.RED + "Material " + materialName + " was already in the list. "
+					+ "It had a respawn time of " + respawnableBlocks.get(materialName) + " seconds.");
+			respawnableBlocks.put(Material.getMaterial(materialName), respawnTime);
+			Bukkit.getServer().getLogger().info(ChatColor.GREEN + "Successfully overwritten the old respawn time.");
+			return;
+		}
+		respawnableBlocks.put(Material.getMaterial(materialName), respawnTime);
+		Bukkit.getServer().getLogger().info(ChatColor.GREEN + "Added material " + materialName + " to the list.");
+	}
+	
+	
+	public void removeRespawnableMaterial(String materialName, long respawnTime) {
+		if (!respawnableBlocks.containsKey(Material.getMaterial(materialName))) {
+			Bukkit.getServer().getLogger().info(ChatColor.RED + "Material " + materialName + " wasn't in the list.");
+			return;
+		}
+		respawnableBlocks.remove(Material.getMaterial(materialName));
+		Bukkit.getServer().getLogger().info(ChatColor.GREEN + "Removed material " + materialName + " from the list.");
+	}
+	
+	
 	
 	// Getter functions
 	public String getName() {
@@ -94,12 +102,5 @@ public class BlockRespawnRegion implements Listener {
 	public World getWorld() {
 		return this.world;
 	}
-	
-	public Material getMaterial() {
-		return this.material;
-	}
-	
-	public long getRespawnTime() {
-		return this.respawnSeconds;
-	}
+
 }
