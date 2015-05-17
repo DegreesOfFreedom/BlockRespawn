@@ -3,15 +3,12 @@ package dev.zariem.blockrespawn;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_8_R2.Tuple;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class BlockRespawnListener implements Listener {
