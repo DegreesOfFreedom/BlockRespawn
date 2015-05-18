@@ -1,6 +1,8 @@
 package dev.zariem.blockrespawn;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.minecraft.server.v1_8_R2.Tuple;
@@ -14,26 +16,29 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import dev.zariem.blockrespawn.objects.*;
+
 public class BlockRespawn extends JavaPlugin {
 	
-	public static Map<String, Tuple<Integer, BlockRespawnRegion>> readyToSelect;
+	public static Map<String, Tuple<Integer, Region>> readyToSelect;
 	// this map ensures that player who didn't issue the command can still right-click blocks with
 	// wooden swords without being handled by my listener class.
+	// The Tuple contains as a string the name of the newly created region.
+	
+	public static List<Region> regions;
+	// This list will contain all the defined regions
 	
 	
 	public void onEnable() {
-		final FileConfiguration config = this.getConfig();
+		regions = new ArrayList<Region>();
+		// TODO load the regions into the List
 		
-		readyToSelect = new HashMap<String, Tuple<Integer, BlockRespawnRegion>>();
-		config.options().copyDefaults(true);
+		readyToSelect = new HashMap<String, Tuple<Integer, Region>>();
 		
-		saveConfig();
+		// instantiate the listener
 		Bukkit.getServer().getPluginManager().registerEvents(new BlockRespawnListener(this), this);
 	}
 	
-	public FileConfiguration config() {
-		return getConfig();
-	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		
@@ -54,20 +59,15 @@ public class BlockRespawn extends JavaPlugin {
 					return true;
 				}
 				
-				if (getConfig().getStringList("regions").contains(args[1])) {
-					player.sendMessage(ChatColor.RED + "A region of this name already exists! Choose another name.");
-					return true;
-				}
+				// TODO add a check for whether a region with this name already exists!
 				
-				BlockRespawnRegion region = new BlockRespawnRegion(args[1], player.getWorld());
-				getConfig().set("regions." + args[1] + ".world", player.getWorld().getName());
-				player.sendMessage(ChatColor.GREEN + "You sucessfully created the region: " + region.getName());
-				
+				Region myRegion = new Region(args[1]);
+				// create a region with the name defined in args[1]
+				player.sendMessage(ChatColor.GREEN + "You sucessfully created the region: " + myRegion.getName());
 				player.sendMessage(ChatColor.GREEN + "Please use a wooden sword and right click"
 						+ " on two blocks to set the region borders.");
-				
 				// register the player for events
-				readyToSelect.put(player.getName(), new Tuple(2, region));
+				readyToSelect.put(player.getName(), new Tuple<Integer, Region>(2, myRegion));
 				// the 2 makes sure that the player gets removed from the map, as soon as he chose 2 blocks.
 				return true;
 			}

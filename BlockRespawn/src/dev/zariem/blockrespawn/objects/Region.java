@@ -12,6 +12,7 @@ import org.json.simple.JSONValue;
 
 public class Region
 {
+	public String name;
 	public Coordinate start;
 	public Coordinate end;
 	public UUID dimension;
@@ -23,9 +24,21 @@ public class Region
 	 * Initialized on first point set
 	 * setStart to be called right after
 	 */
-	public Region() {
+	public Region(String name) {
+		this.name = name;
 		this.regionID = UUID.randomUUID();
 	}
+	
+	/**
+	 * Returns the name of the region.
+	 */
+	public String getName() {
+		return this.name;
+	}
+	
+	
+	// TODO change the blockTypes array to a HashMap containing "name" as key, and "respawnTime" as value
+	
 	
 	/**
 	 * Set the description for this 
