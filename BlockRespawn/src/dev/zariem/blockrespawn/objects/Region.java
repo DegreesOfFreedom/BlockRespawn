@@ -2,10 +2,13 @@ package dev.zariem.blockrespawn.objects;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -18,7 +21,7 @@ public class Region
 	public UUID dimension;
 	public UUID regionID;
 	public String description;
-	public ArrayList<Material> blockTypes;
+	public ConcurrentHashMap<Material, Integer> blockTypes;
 	
 	/**
 	 * Initialized on first point set
@@ -36,9 +39,47 @@ public class Region
 		return this.name;
 	}
 	
+	/**
+	 * Return Integer respawnTime for Material
+	 * @param name String name of Material.name();
+	 * @return Integer respawnTime
+	 */
+	public Integer getMaterialRespawnTime(String name) {
+		Material m = Material.getMaterial(name);
+		if(this.blockTypes.containsKey(m)) {
+			return this.blockTypes.get(m);
+		} else {
+			return null;
+		}
+	}
 	
-	// TODO change the blockTypes array to a HashMap containing "name" as key, and "respawnTime" as value
+	/**
+	 * Quickly check if region handles block type
+	 * @param m Material of block
+	 * @return Boolean true if handled by region false if not
+	 */
+	public Boolean containsBlock(Material m) {
+		if(this.blockTypes.containsKey(m)) return true;
+		return false;
+	}
 	
+	/**
+	 * Check if coordinate is within region bounds
+	 * @param c Coordinate of block
+	 * @return Boolean true if in bounds, false if out of bounds or no bounds set
+	 */
+	public Boolean coordInBounds(Coordinate c) {
+		if(this.start != null && this.end != null) {
+			if(c.x < this.start.x) return false;
+			if(c.y < this.start.y) return false;
+			if(c.z < this.start.z) return false;
+			if(c.x > this.end.x) return false;
+			if(c.y > this.end.x) return false;
+			if(c.z > this.end.z) return false;
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * Set the description for this 
@@ -124,8 +165,12 @@ public class Region
 		jObj.put("description", this.description);
 		
 		JSONArray jBlockTypes = new JSONArray();
-		for (Material m : this.blockTypes) {
-			jBlockTypes.add(m.name());
+		for (Entry<Material, Integer> entry : this.blockTypes.entrySet()) {
+			Material m = entry.getKey();
+			JSONObject eObj = new JSONObject();
+			eObj.put("material", m.name());
+			eObj.put("timer", entry.getValue());
+			jBlockTypes.add(eObj);
 		}
 		
 		jObj.put("blockTypes", jBlockTypes);
@@ -159,11 +204,11 @@ public class Region
 			this.dimension = java.util.UUID.fromString((String) jObj.get("dimension"));
 			this.regionID = java.util.UUID.fromString((String) jObj.get("regionID"));
 			this.description = (String) jObj.get("description");
-			ArrayList<Material> jList = new ArrayList<Material>();
+			ConcurrentHashMap<Material, Integer> jList = new ConcurrentHashMap<Material, Integer>();
 			JSONArray jLArray = (JSONArray) jObj.get("blockTypes");
 			for(Object o : jLArray) {
-				String name = (String) o;
-				jList.add(Material.getMaterial(name));
+				JSONObject name = (JSONObject) o;
+				jList.put(Material.getMaterial((String) name.get("material")), (Integer) name.get("timer"));
 			}
 			this.blockTypes = jList;
 		}
