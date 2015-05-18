@@ -2,6 +2,6 @@
 
 !/.gitignore
 !/README.md
-!/BlockRespawn/*
+!/BlockRespawn
 !/BlockRespawn/src
 !/BlockRespawn/src/*
