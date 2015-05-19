@@ -49,50 +49,7 @@ public class BlockRespawn extends JavaPlugin {
 		Player player = (Player) sender;
 		
 		if (cmd.getName().equalsIgnoreCase("br")) {
-			if (args.length == 0) {
-				// TODO add default help page
-				return true;
-			}
-			if (args[0].equalsIgnoreCase("newregion")) {
-				if (args.length < 2) {
-					player.sendMessage(ChatColor.RED + "Wrong number of arguments! Use /br newregion [name]");
-					return true;
-				}
-				
-				// TODO add a check for whether a region with this name already exists!
-				
-				Region myRegion = new Region(args[1]);
-				// create a region with the name defined in args[1]
-				player.sendMessage(ChatColor.GREEN + "You sucessfully created the region: " + myRegion.getName());
-				player.sendMessage(ChatColor.GREEN + "Please use a wooden sword and right click"
-						+ " on two blocks to set the region borders.");
-				// register the player for events
-				readyToSelect.put(player.getName(), new Tuple<Integer, Region>(2, myRegion));
-				// the 2 makes sure that the player gets removed from the map, as soon as he chose 2 blocks.
-				return true;
-			}
-			if (args[0].equalsIgnoreCase("region")) {
-				// modify a region
-				if (args.length == 1) {
-					// TODO add region help page
-					return true;
-				}
-				if (args[1].equalsIgnoreCase("add")) {
-					if (args.length < 5) {
-						player.sendMessage(ChatColor.RED + "Wrong number of arguments."
-								+ " Use /br region add [regionname] [material] [respawntime]");
-						return true;
-					}
-					// now args.length is at least 5. If too many arguments are given, they will be ignored.
-					
-					
-					Material mat = Material.getMaterial(args[2]);
-					// TODO add a check for validity of the material!
-					if (!isInteger(args[3])) {
-						player.sendMessage(ChatColor.RED + "Make sure that the respawn time is a number!");
-					}
-				}
-			}
+			new RegionCommand(this, sender, cmd, commandLabel, args);
 		}
 		return true;
 	}
