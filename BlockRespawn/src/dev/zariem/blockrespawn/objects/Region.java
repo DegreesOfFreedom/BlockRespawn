@@ -114,9 +114,6 @@ public class Region
 		// Make sure start is lower than end
 		this.fixCoordinates();
 		// Debugging output
-		Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Created region " + this.getName());
-		Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "with start at: " + this.start.x + "/" + this.start.y + "/" + this.start.z);
-		Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "and end at: " + this.end.x + "/" + this.end.y + "/" + this.end.z);
 	}
 	
 	/**
