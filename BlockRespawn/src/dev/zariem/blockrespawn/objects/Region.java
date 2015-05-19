@@ -7,12 +7,15 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+
+import dev.zariem.blockrespawn.BlockRespawn;
 
 public class Region
 {
@@ -192,7 +195,7 @@ public class Region
 		
 		String jString = jObj.toJSONString();
 		try {
-			FH.writeFile(jString, "BlockRespawn/regions/" + this.regionID.toString() + ".json");
+			FH.writeFile(jString, BlockRespawn.dataFolder.getPath() + "BlockRespawn/regions/" + this.regionID.toString() + ".json");
 		} catch (IOException e) {
 			
 		}

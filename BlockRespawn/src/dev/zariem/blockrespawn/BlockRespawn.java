@@ -1,5 +1,6 @@
 package dev.zariem.blockrespawn;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,14 +10,12 @@ import net.minecraft.server.v1_8_R2.Tuple;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import dev.zariem.blockrespawn.objects.*;
+import dev.zariem.blockrespawn.objects.Region;
 
 public class BlockRespawn extends JavaPlugin {
 	
@@ -27,6 +26,8 @@ public class BlockRespawn extends JavaPlugin {
 	
 	public static List<Region> regions;
 	// This list will contain all the defined regions
+	
+	public static final File dataFolder = Bukkit.getPluginManager().getPlugin("BlockRespawn").getDataFolder();
 	
 	
 	public void onEnable() {
