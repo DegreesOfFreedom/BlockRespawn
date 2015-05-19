@@ -71,10 +71,10 @@ public class Region
 	public Boolean coordInBounds(Coordinate c) {
 		if(this.start != null && this.end != null) {
 			if(c.x < this.start.x) return false;
-			if(c.y < this.start.y) return false;
-			if(c.z < this.start.z) return false;
 			if(c.x > this.end.x) return false;
-			if(c.y > this.end.x) return false;
+			if(c.y < this.start.y) return false;
+			if(c.y > this.end.y) return false;
+			if(c.z < this.start.z) return false;
 			if(c.z > this.end.z) return false;
 			return true;
 		}
