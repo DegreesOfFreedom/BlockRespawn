@@ -2,6 +2,7 @@ package dev.zariem.blockrespawn.objects;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +31,8 @@ public class Region
 	public Region(String name) {
 		this.name = name;
 		this.regionID = UUID.randomUUID();
+		this.description = "";
+		this.blockTypes = new ConcurrentHashMap<Material, Integer>();
 	}
 	
 	/**
@@ -113,6 +116,15 @@ public class Region
 	}
 	
 	/**
+	 * Add block to region
+	 * @param m
+	 * @param respawnTime
+	 */
+	public void addBlock(Material m, Integer respawnTime) {
+		this.blockTypes.put(m, respawnTime);
+	}
+	
+	/**
 	 * Fix cuboid to start<end
 	 * @return		Boolean - True if fixed, false if not necessary
 	 */
@@ -165,7 +177,9 @@ public class Region
 		jObj.put("description", this.description);
 		
 		JSONArray jBlockTypes = new JSONArray();
-		for (Entry<Material, Integer> entry : this.blockTypes.entrySet()) {
+		Iterator it = this.blockTypes.entrySet().iterator();
+		while(it.hasNext()) {
+			Entry<Material, Integer> entry = (Entry<Material, Integer>) it.next();
 			Material m = entry.getKey();
 			JSONObject eObj = new JSONObject();
 			eObj.put("material", m.name());

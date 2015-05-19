@@ -46,8 +46,7 @@ public class BlockRespawnListener implements Listener {
 					if (BlockRespawn.readyToSelect.get(name).a() == 1) {
 						region.setEnd(loc);
 						player.sendMessage(ChatColor.GREEN + "Selected the second block.");
-						BlockRespawn.readyToSelect.remove(name);
-						region.save();
+						BlockRespawn.readyToSelect.put(name, new Tuple<Integer, Region>(0, region));
 						return;
 					}
 				}
